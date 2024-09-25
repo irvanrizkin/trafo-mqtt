@@ -1,3 +1,4 @@
+import axios from "axios";
 import * as mqtt from "mqtt";
 
 export class MqttService {
@@ -23,7 +24,13 @@ export class MqttService {
 		}
 
 		MqttService.mqttClient.on('message', (topic, message) => {
-			console.log(`Received message from ${topic}: ${message.toString()}`);
+			try {
+				axios.post(process.env.BASE_URL || 'https://reqres.in/api/users', {
+					value: message.toString(),
+				});
+			} catch (error) {
+				console.error(error);
+			}
 		});
 	}
 }
