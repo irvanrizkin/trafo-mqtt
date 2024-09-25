@@ -26,6 +26,7 @@ export class MqttService {
 		MqttService.mqttClient.on('message', (topic, message) => {
 			try {
 				axios.post(process.env.BASE_URL || 'https://reqres.in/api/users', {
+					topic,
 					value: message.toString(),
 				});
 			} catch (error) {
