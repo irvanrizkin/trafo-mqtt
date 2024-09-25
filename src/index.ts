@@ -1,8 +1,12 @@
+import 'dotenv/config';
 import express, { Response } from 'express';
+import { MqttService } from './services/MqttService';
 
 const app = express();
 
 const PORT = 3000;
+
+MqttService.connect();
 
 app.get('/', (_, res: Response) => {
   res.json({
