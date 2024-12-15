@@ -18,7 +18,7 @@ export class MqttService {
 			console.log('Connected to MQTT Broker');
 		});
 
-		for (let i = 1; i <= 18; i++) {
+		for (let i = 1; i <= 94; i++) {
 			MqttService.mqttClient.subscribe(`data${i}`);
 			console.log(`Subscribed to data${i}`);
 		}
