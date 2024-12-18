@@ -23,7 +23,7 @@ FROM node:16
 WORKDIR /app
 
 # Copy built JavaScript files from the previous stage
-COPY --from=build /app/build ./build
+COPY --from=build /app/dist ./dist
 COPY --from=build /app/package*.json ./
 
 # Copy .env file
