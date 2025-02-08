@@ -39,7 +39,7 @@ export class MqttService {
         if (!data) return;
 
         const { table, column } = data;
-        const payload = message;
+        const payload = message === '' ? "0" : message;
         const datetime = Math.floor(Date.now() / 1000);
 
         if (!datetime) {
