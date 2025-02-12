@@ -28,8 +28,15 @@ export class MqttService {
             MqttService.mqttClient.subscribe(topic);
             console.log(`Subscribed to ${topic}`);
         }
+        // Subscribe for millis topic
+        MqttService.mqttClient.subscribe('millis');
+        console.log(`Subscribed to millis`);
 
         MqttService.mqttClient.on('message', (topic, message) => {
+            if (topic === 'millis') {
+                MqttService.sendMillisToAPI(message.toString());
+                return;
+            }
             MqttService.handleMessage(topic as keyof typeof MqttService.topicMap, message.toString());
         });
     }
@@ -90,5 +97,18 @@ export class MqttService {
             // Clear buffer
             MqttService.dataBuffer = {};
         }, MqttService.UPLOAD_DELAY);
+    }
+
+    static sendMillisToAPI(millis: string) {
+        axios.post(process.env.BASE_URL || 'https://reqres.in/api/users', {
+            time_iot: millis,
+            time_server: new Date().valueOf().toString(),
+        })
+        .then(response => {
+            console.log(`Sent millis:`, response.data);
+        })
+        .catch(error => {
+            console.error(`Failed to send millis:`, error);
+        });
     }
 }
