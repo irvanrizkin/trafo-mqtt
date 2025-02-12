@@ -102,7 +102,7 @@ export class MqttService {
     static sendMillisToAPI(millis: string) {
         axios.post(process.env.BASE_URL_MILLIS || 'https://reqres.in/api/users', {
             time_iot: millis,
-            time_server: new Date().valueOf().toString(),
+            time_server_mqtt: new Date().valueOf().toString(),
         })
         .then(response => {
             console.log(`Sent millis:`, response.data);
