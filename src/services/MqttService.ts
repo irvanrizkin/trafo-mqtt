@@ -62,11 +62,14 @@ export class MqttService {
         MqttService.dataBuffer[datetime][table][column] = payload;
 
         // Schedule sending after delay
-        MqttService.debounceSend();
+        MqttService.debounceSend(topic);
     }
 
-    static debounceSend() {
+    static debounceSend(topic: string) {
         if (MqttService.debounceTimer) clearTimeout(MqttService.debounceTimer);
+
+        const topicNumber = parseInt(topic.replace("data", ""), 10);
+        const trafoId = topicNumber >= 95 ? 2 : 1;
 
         MqttService.debounceTimer = setTimeout(() => {
             const batchData = Object.entries(MqttService.dataBuffer).map(([datetime, tables]) => {
@@ -76,7 +79,7 @@ export class MqttService {
                         table,
                         data: {
                             ...restData,
-                            trafo_id: 1, // Hardcoded trafo_id
+                            trafo_id: trafoId, // Hardcoded trafo_id
                             topic_name: table
                         }
                     };
@@ -86,7 +89,12 @@ export class MqttService {
             if (batchData.length === 0) return;
 
             // Send batched data via HTTP
-            axios.post(process.env.BASE_URL || 'https://reqres.in/api/users', batchData)
+            const baseUrl = process.env.BASE_URL?.toString();
+            if (!baseUrl) {
+                console.error('BASE_URL is not defined');
+                return;
+            }
+            axios.post(baseUrl.concat(`/metric/${trafoId}/mqtt`), batchData)
             .then(response => {
                 console.log(`Sent data:`, response.data);
             })
