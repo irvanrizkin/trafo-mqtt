@@ -102,7 +102,7 @@ export class MqttService {
   private async sendToApi(mappedData: any) {
     try {
       const response = await axios.post(
-        `${process.env.BASE_URL}/api/metric/1/mqtt`,
+        `${process.env.BASE_URL}/api/metric/mqtt`,
         mappedData,
       );
       console.log("Data sent to API:", response.data);
